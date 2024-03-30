@@ -3,6 +3,8 @@ import "@styles/globals.css";
 import Nav from "@components/Nav";
 import Provider from "@components/Provider";
 import { Toaster } from "react-hot-toast";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export const metadata = {
   title: "Prompt-Hunt",
@@ -23,6 +25,8 @@ const RootLayout = ({ children }) => {
             {children}
           </main>
         </Provider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
