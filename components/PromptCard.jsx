@@ -45,30 +45,6 @@ const PromptCard = ({
 
   // console.log(session, "session");
 
-  // const handleBookmark = async () => {
-  //   try {
-  //     const res = await fetch("/api/bookmarks/add", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         promptId: prompt._id,
-  //         userId: session?.user.id,
-  //       }),
-  //     });
-  //     if (res.ok) {
-  //       setIsBookmarked(true);
-  //       toast.success("Prompt bookmarked");
-  //     }
-  //     if (res.status === 409) {
-  //       toast.error("Prompt alreay bookmarked");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error bookmarking prompt:", error);
-  //   }
-  // };
-
   const handleBookmark = async () => {
     try {
       if (!session) {
@@ -110,27 +86,6 @@ const PromptCard = ({
       toast.error("Failed to bookmark prompt");
     }
   };
-
-  // const fetchBookmarks = async () => {
-  //   try {
-  //     if (!session || !session?.user) return;
-
-  //     const response = await fetch(
-  //       `/api/bookmarks/getBookmarks/${session?.user.id}`
-  //     );
-  //     const data = await response.json();
-  //     // console.log(data, "data");
-  //     // console.log(prompt._id, "prompt id");
-  //     // setIsBookmarked(data.includes(prompt._id));
-  //     // console.log(isBookmarked, "isBookmarked");
-  //   } catch (error) {
-  //     console.error("Error fetching bookmarks:", error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchBookmarks();
-  // }, [userId]);
 
   return (
     <div className="prompt_card my-4">
