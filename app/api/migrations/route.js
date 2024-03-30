@@ -1,28 +1,46 @@
 // migrations/add_bookmarks_to_users.js
 
-import User from "@models/user";
+// Import Mongoose connection and models
 import { connectToDB } from "@utils/database";
+import User from "@models/user";
+import Prompt from "@models/prompt";
 
+// Define the migration function
 export const GET = async () => {
   try {
     // Connect to the database
     await connectToDB();
 
-    // Define the migration logic
-    const migrationLogic = async () => {
-      // Add bookmarks field to the users collection
-      await User.updateMany({}, { $set: { bookmarks: [] } });
+    // Update existing prompts to include the 'likes' field
+    const promptMigrationResult = async () => {
+      await Prompt.updateMany({}, { $set: { likes: 0 } });
+      console.log(
+        `${promptMigrationResult.nModified} prompts migrated successfully.`
+      );
     };
-    //run the migration logic
-    await migrationLogic();
-    console.log("Migration completed successfully");
-    process.exit(0);
+
+    // Update existing users to include the 'likedPrompts' field
+    const userMigrationResult = async () => {
+      await User.updateMany({}, { $set: { likedPrompts: [] } });
+      console.log(
+        `${userMigrationResult.nModified} users migrated successfully.`
+      );
+    };
+
+    await promptMigrationResult();
+    await userMigrationResult();
   } catch (error) {
-    console.error("migration failed:", error);
+    console.error("Migration failed:", error);
+  } finally {
+    // Close the database connection
+    process.exit(0);
   }
 };
 
-// const addBookmarksFieldToUsers = async () => {
+// import User from "@models/user";
+// import { connectToDB } from "@utils/database";
+
+// export const GET = async () => {
 //   try {
 //     // Connect to the database
 //     await connectToDB();
@@ -32,17 +50,11 @@ export const GET = async () => {
 //       // Add bookmarks field to the users collection
 //       await User.updateMany({}, { $set: { bookmarks: [] } });
 //     };
-
-//     // Run the migration logic
+//     //run the migration logic
 //     await migrationLogic();
-
 //     console.log("Migration completed successfully");
 //     process.exit(0);
 //   } catch (error) {
-//     console.error("Migration failed:", error);
-//     process.exit(1);
+//     console.error("migration failed:", error);
 //   }
 // };
-
-// // Execute the migration
-// addBookmarksFieldToUsers();
