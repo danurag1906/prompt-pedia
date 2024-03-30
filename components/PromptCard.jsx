@@ -183,7 +183,7 @@ const PromptCard = ({
   };
 
   const handleShare = () => {
-    const url = `http://localhost:3000/single-prompt?id=${prompt._id}&pun=${prompt.creator.username}`;
+    const url = `https://prompt-hunt.vercel.app/single-prompt?id=${prompt._id}&pun=${prompt.creator.username}`;
     navigator.clipboard.writeText(url);
     setSharePopup(true);
     setTimeout(() => setSharePopup(false), 2000);
