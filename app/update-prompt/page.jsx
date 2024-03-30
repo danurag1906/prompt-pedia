@@ -7,56 +7,56 @@ import { Suspense } from "react";
 import Form from "@components/Form";
 
 const UpdatePrompt = () => {
-  const [submitting, setSubmitting] = useState(false);
-  const [prompt, setPrompt] = useState({
-    promptText: "",
-    result: "",
-    tagLine: "",
-  });
+  function SuspenseUpdate() {
+    const [submitting, setSubmitting] = useState(false);
+    const [prompt, setPrompt] = useState({
+      promptText: "",
+      result: "",
+      tagLine: "",
+    });
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const promptId = searchParams.get("id");
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const promptId = searchParams.get("id");
 
-  const updatePrompt = async (e) => {
-    e.preventDefault();
-    setSubmitting(true);
-    try {
-      const response = await fetch(`/api/prompt/${promptId}`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          promptText: prompt.promptText,
-          result: prompt.result,
-          tagLine: prompt.tagLine,
-        }),
-      });
-      if (response.ok) {
-        router.push("/");
+    const updatePrompt = async (e) => {
+      e.preventDefault();
+      setSubmitting(true);
+      try {
+        const response = await fetch(`/api/prompt/${promptId}`, {
+          method: "PATCH",
+          body: JSON.stringify({
+            promptText: prompt.promptText,
+            result: prompt.result,
+            tagLine: prompt.tagLine,
+          }),
+        });
+        if (response.ok) {
+          router.push("/");
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setSubmitting(false);
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  useEffect(() => {
-    const getPromptDetails = async () => {
-      const response = await fetch(`/api/prompt/${promptId}`);
-      const data = await response.json();
-      setPrompt({
-        promptText: data.promptText,
-        result: data.result,
-        tagLine: data.tagLine,
-      });
     };
-    if (promptId) {
-      getPromptDetails();
-    }
-  }, [promptId]);
 
-  return (
-    <Suspense>
+    useEffect(() => {
+      const getPromptDetails = async () => {
+        const response = await fetch(`/api/prompt/${promptId}`);
+        const data = await response.json();
+        setPrompt({
+          promptText: data.promptText,
+          result: data.result,
+          tagLine: data.tagLine,
+        });
+      };
+      if (promptId) {
+        getPromptDetails();
+      }
+    }, [promptId]);
+
+    return (
       <Form
         type="Edit"
         prompt={prompt}
@@ -64,6 +64,12 @@ const UpdatePrompt = () => {
         submitting={submitting}
         handleSubmit={updatePrompt}
       />
+    );
+  }
+
+  return (
+    <Suspense>
+      <SuspenseUpdate />
     </Suspense>
   );
 };
