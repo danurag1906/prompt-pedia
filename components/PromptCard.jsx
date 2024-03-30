@@ -15,27 +15,16 @@ const PromptCard = ({
   onHandleDelete,
   onRemoveBookmark,
 }) => {
-  const handleCopy = () => {
-    setCopied(prompt.promptText);
-    navigator.clipboard.writeText(prompt.promptText);
-    setTimeout(() => setCopied(""), 2000);
-    toast.success("Prompt copied to clipboard");
-  };
-
-  const handleShare = () => {
-    const url = `http://localhost:3000/single-prompt?id=${prompt._id}&pun=${prompt.creator.username}`;
-    navigator.clipboard.writeText(url);
-    setSharePopup(true);
-    setTimeout(() => setSharePopup(false), 2000);
-    toast.success("Link copied to clipboard");
-  };
-
   const [copied, setCopied] = useState("");
   const [sharePopup, setSharePopup] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const [likeCount, setLikeCount] = useState(0);
+  const [isLiked, setIsLiked] = useState(false); // State to track if prompt is liked
+
   const pathName = usePathname();
   const { data: session } = useSession();
-  const router = useRouter;
+  const router = useRouter();
   const userId = session?.user.id;
 
   // State variables to manage hover states for each icon
@@ -64,27 +53,138 @@ const PromptCard = ({
       });
 
       if (res.ok) {
+        // console.log(res, "res");
         if (res.status === 201) {
-          // setIsBookmarked((prevState) => !prevState);
-          // console.log(isBookmarked, "isBookmarked");
-          onRemoveBookmark(prompt._id);
           toast.success("Prompt removed from bookmarks");
+          setIsBookmarked(false);
+          if (pathName == "/get-bookmarks") {
+            onRemoveBookmark(prompt._id);
+          }
         } else {
-          // setIsBookmarked(true);
-          // setIsBookmarked((prevState) => !prevState);
-          // console.log(isBookmarked, "isBookmarked");
           toast.success("Prompt bookmarked");
+          setIsBookmarked(true);
         }
-        // console.log(isBookmarked, "isBookmarked");
-        // fetchBookmarks();
+        fetchBookmarkStatus();
       } else {
         const data = await res.json();
         toast.error(data.message || "Something went wrong");
       }
     } catch (error) {
-      // console.error("Error bookmarking prompt:", error);
       toast.error("Failed to bookmark prompt");
     }
+  };
+
+
+  const fetchBookmarkStatus = async () => {
+    try {
+      const res = await fetch(`/api/bookmarks/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          promptId: prompt._id,
+          userId: userId,
+        }),
+      });
+      const data = await res.json();
+      setIsBookmarked(data.bookmarked);
+    } catch (error) {
+      toast.error("Error fetching bookmark status:");
+    }
+  };
+
+  useEffect(() => {
+    // console.log("indide useeffect");
+    if (session) {
+      fetchLikeCount(); // Fetch like count when component mounts
+      fetchLikeStatus();
+      fetchBookmarkStatus();
+    }
+
+    // }
+  }, [session]);
+
+  const fetchLikeCount = async () => {
+    try {
+      const res = await fetch(`/api/likes/count/${prompt._id}`);
+      const data = await res.json();
+      setLikeCount(data.likesCount);
+    } catch (error) {
+      console.error("Error fetching like count:", error);
+    }
+  };
+
+  const fetchLikeStatus = async () => {
+    try {
+      const res = await fetch(`/api/likes/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          promptId: prompt._id,
+          userId: userId,
+        }),
+      });
+      const data = await res.json();
+      setIsLiked(data.isLiked);
+    } catch (error) {
+      console.error("Error fetching like status:", error);
+    }
+  };
+
+  const handleLike = async () => {
+    try {
+      if (!session) {
+        router.push("/login");
+        return;
+      }
+
+      const res = await fetch("/api/likes/toggle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          promptId: prompt._id,
+          userId: session?.user.id,
+        }),
+      });
+
+      if (res.ok) {
+        if (res.status == 201) {
+          setIsLiked(false);
+          toast.success("Prompt unliked");
+        } else {
+          setIsLiked(true);
+          toast.success("Prompt liked");
+        }
+
+        fetchLikeCount();
+        fetchLikeStatus();
+      } else {
+        const data = await res.json();
+        toast.error(data.message || "Something went wrong");
+      }
+    } catch (error) {
+      toast.error("Failed to toggle like");
+    }
+  };
+
+  const handleCopy = () => {
+    setCopied(prompt.promptText);
+    navigator.clipboard.writeText(prompt.promptText);
+    setTimeout(() => setCopied(""), 2000);
+    toast.success("Prompt copied to clipboard");
+  };
+
+  const handleShare = () => {
+    const url = `http://localhost:3000/single-prompt?id=${prompt._id}&pun=${prompt.creator.username}`;
+    navigator.clipboard.writeText(url);
+    setSharePopup(true);
+    setTimeout(() => setSharePopup(false), 2000);
+    toast.success("Link copied to clipboard");
   };
 
   return (
@@ -174,7 +274,28 @@ const PromptCard = ({
             )}
           </div>
         )}
+        {session && (
+          <>
+            <div className="copy_btn cursor-pointer " onClick={handleLike}>
+              <Image
+                src={
+                  isLiked
+                    ? "/assets/icons/heart-filled.svg"
+                    : "/assets/icons/heart-outline.svg"
+                }
+                width={12}
+                height={12}
+                alt="like_icon"
+                className={`transition-colors duration-300 ${
+                  isLiked ? "text-red-500" : "text-gray-500 hover:text-red-500"
+                }`}
+              />
+            </div>
+            <span className="text-sm text-gray-500 p-1">{likeCount}</span>
+          </>
+        )}
       </div>
+
       <Link
         href={`/single-prompt?id=${prompt._id}&pun=${prompt.creator.username}`}
       >
@@ -182,7 +303,6 @@ const PromptCard = ({
           {prompt.promptText}
         </p>
       </Link>
-      {/* <p className="my-4 font-satoshi text-sm text-gray-700">{prompt.result}</p> */}
       <p
         className="font-inter text-sm blue_gradient cursor-pointer"
         onClick={() => handleTagClick && handleTagClick(prompt.tagLine)}

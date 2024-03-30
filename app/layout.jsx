@@ -5,7 +5,7 @@ import Provider from "@components/Provider";
 import { Toaster } from "react-hot-toast";
 
 export const metadata = {
-  title: "Prompt-pedia",
+  title: "Prompt-Hunt",
   description: "Discover, create & share AI prompts",
 };
 
