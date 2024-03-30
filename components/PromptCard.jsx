@@ -15,21 +15,6 @@ const PromptCard = ({
   onHandleDelete,
   onRemoveBookmark,
 }) => {
-  const handleCopy = () => {
-    setCopied(prompt.promptText);
-    navigator.clipboard.writeText(prompt.promptText);
-    setTimeout(() => setCopied(""), 2000);
-    toast.success("Prompt copied to clipboard");
-  };
-
-  const handleShare = () => {
-    const url = `http://localhost:3000/single-prompt?id=${prompt._id}&pun=${prompt.creator.username}`;
-    navigator.clipboard.writeText(url);
-    setSharePopup(true);
-    setTimeout(() => setSharePopup(false), 2000);
-    toast.success("Link copied to clipboard");
-  };
-
   const [copied, setCopied] = useState("");
   const [sharePopup, setSharePopup] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -39,7 +24,7 @@ const PromptCard = ({
 
   const pathName = usePathname();
   const { data: session } = useSession();
-  const router = useRouter;
+  const router = useRouter();
   const userId = session?.user.id;
 
   // State variables to manage hover states for each icon
@@ -68,26 +53,43 @@ const PromptCard = ({
       });
 
       if (res.ok) {
+        // console.log(res, "res");
         if (res.status === 201) {
-          // setIsBookmarked((prevState) => !prevState);
-          // console.log(isBookmarked, "isBookmarked");
-          onRemoveBookmark(prompt._id);
           toast.success("Prompt removed from bookmarks");
+          setIsBookmarked(false);
+          if (pathName == "/get-bookmarks") {
+            onRemoveBookmark(prompt._id);
+          }
         } else {
-          // setIsBookmarked(true);
-          // setIsBookmarked((prevState) => !prevState);
-          // console.log(isBookmarked, "isBookmarked");
           toast.success("Prompt bookmarked");
+          setIsBookmarked(true);
         }
-        // console.log(isBookmarked, "isBookmarked");
-        // fetchBookmarks();
+        fetchBookmarkStatus();
       } else {
         const data = await res.json();
         toast.error(data.message || "Something went wrong");
       }
     } catch (error) {
-      // console.error("Error bookmarking prompt:", error);
       toast.error("Failed to bookmark prompt");
+    }
+  };
+
+  const fetchBookmarkStatus = async () => {
+    try {
+      const res = await fetch(`/api/bookmarks/status`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          promptId: prompt._id,
+          userId: userId,
+        }),
+      });
+      const data = await res.json();
+      setIsBookmarked(data.bookmarked);
+    } catch (error) {
+      toast.error("Error fetching bookmark status:");
     }
   };
 
@@ -96,10 +98,9 @@ const PromptCard = ({
     if (session) {
       fetchLikeCount(); // Fetch like count when component mounts
       fetchLikeStatus();
+      fetchBookmarkStatus();
     }
-    // Check if prompt is liked by the user
-    // if (session) {
-    //   setIsLiked(session.user.likes.includes(prompt._id));
+
     // }
   }, [session]);
 
@@ -107,7 +108,6 @@ const PromptCard = ({
     try {
       const res = await fetch(`/api/likes/count/${prompt._id}`);
       const data = await res.json();
-      // console.log(data.likesCount);
       setLikeCount(data.likesCount);
     } catch (error) {
       console.error("Error fetching like count:", error);
@@ -127,7 +127,6 @@ const PromptCard = ({
         }),
       });
       const data = await res.json();
-      // console.log(data, "data");
       setIsLiked(data.isLiked);
     } catch (error) {
       console.error("Error fetching like status:", error);
@@ -170,6 +169,21 @@ const PromptCard = ({
     } catch (error) {
       toast.error("Failed to toggle like");
     }
+  };
+
+  const handleCopy = () => {
+    setCopied(prompt.promptText);
+    navigator.clipboard.writeText(prompt.promptText);
+    setTimeout(() => setCopied(""), 2000);
+    toast.success("Prompt copied to clipboard");
+  };
+
+  const handleShare = () => {
+    const url = `http://localhost:3000/single-prompt?id=${prompt._id}&pun=${prompt.creator.username}`;
+    navigator.clipboard.writeText(url);
+    setSharePopup(true);
+    setTimeout(() => setSharePopup(false), 2000);
+    toast.success("Link copied to clipboard");
   };
 
   return (
@@ -288,7 +302,6 @@ const PromptCard = ({
           {prompt.promptText}
         </p>
       </Link>
-      {/* <p className="my-4 font-satoshi text-sm text-gray-700">{prompt.result}</p> */}
       <p
         className="font-inter text-sm blue_gradient cursor-pointer"
         onClick={() => handleTagClick && handleTagClick(prompt.tagLine)}

@@ -7,32 +7,29 @@ export const POST = async (req) => {
     await connectToDB();
     const { promptId, userId } = await req.json();
 
-    // console.log(promptId, "promptId");
-    // console.log(userId, "userId");
-
     const user = await User.findById(userId);
-    // console.log(user, "user");
+
     if (!user) {
       return new Response("User not found", { status: 404 });
     }
 
     const prompt = await Prompt.findById(promptId);
-    // console.log(prompt, "prompt");
+
     if (!prompt) {
       return new Response("Prompt not found", { status: 404 });
     }
 
     const likeIndex = user.likedPrompts.indexOf(promptId);
-    // console.log(likeIndex, "likeIndex");
+
     let isLiked;
 
     if (likeIndex !== -1) {
       isLiked = true;
-      //   console.log("true");
+
       return new Response(JSON.stringify({ isLiked }), { status: 200 });
     } else {
       isLiked = false;
-      //   console.log("false");
+
       return new Response(JSON.stringify({ isLiked }), { status: 200 });
     }
   } catch (error) {
