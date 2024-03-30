@@ -74,6 +74,7 @@ const PromptCard = ({
     }
   };
 
+
   const fetchBookmarkStatus = async () => {
     try {
       const res = await fetch(`/api/bookmarks/status`, {
