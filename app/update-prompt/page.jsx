@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import Form from "@components/Form";
 
@@ -55,13 +56,15 @@ const UpdatePrompt = () => {
   }, [promptId]);
 
   return (
-    <Form
-      type="Edit"
-      prompt={prompt}
-      setPrompt={setPrompt}
-      submitting={submitting}
-      handleSubmit={updatePrompt}
-    />
+    <Suspense>
+      <Form
+        type="Edit"
+        prompt={prompt}
+        setPrompt={setPrompt}
+        submitting={submitting}
+        handleSubmit={updatePrompt}
+      />
+    </Suspense>
   );
 };
 

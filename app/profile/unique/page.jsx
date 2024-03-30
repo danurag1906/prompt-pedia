@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-
+import { Suspense } from "react";
 import Profile from "@components/Profile";
 
 const MyProfile = () => {
@@ -40,7 +40,11 @@ const MyProfile = () => {
     }
   }, [profileId]);
 
-  return <Profile name={user} data={allPrompts} />;
+  return (
+    <Suspense>
+      <Profile name={user} data={allPrompts} />
+    </Suspense>
+  );
 };
 
 export default MyProfile;

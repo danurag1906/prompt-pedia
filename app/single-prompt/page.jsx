@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
+import { Suspense } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
@@ -205,115 +206,117 @@ const SinglePrompt = () => {
   // console.log(prompt, "prompt");
 
   return (
-    <section className="w-full mx-4 my-8">
-      <div className="flex  flex-col gap-7 prompt_card_full">
-        <div className="flex gap-4">
-          <div
-            className="copy_btn relative"
-            onMouseEnter={() => setCopyHovered(true)}
-            onMouseLeave={() => setCopyHovered(false)}
-            onClick={handleCopy}
-          >
-            <Image
-              src={
-                copied === prompt.promptText
-                  ? "/assets/icons/tick.svg"
-                  : "/assets/icons/copy.svg"
-              }
-              width={12}
-              height={12}
-              alt="copy_icon"
-            />
-            {copyHovered && (
-              <span className="tooltip tooltip-top absolute bottom-8 bg-black text-white py-1 px-2 rounded text-xs">
-                Copy
-              </span>
-            )}
-          </div>
-          <div
-            className="copy_btn relative"
-            onMouseEnter={() => setShareHovered(true)}
-            onMouseLeave={() => setShareHovered(false)}
-            onClick={handleShare}
-          >
-            <Image
-              src={
-                sharePopup === true
-                  ? "/assets/icons/tick.svg"
-                  : "/assets/icons/share.svg"
-              }
-              width={12}
-              height={12}
-              alt="share_icon"
-            />
-            {shareHovered && (
-              <span className="tooltip tooltip-top absolute bottom-8 bg-black text-white py-1 px-2 rounded text-xs">
-                Share
-              </span>
-            )}
-          </div>
-          {session && (
+    <Suspense>
+      <section className="w-full mx-4 my-8">
+        <div className="flex  flex-col gap-7 prompt_card_full">
+          <div className="flex gap-4">
             <div
               className="copy_btn relative"
-              onMouseEnter={() => setBookmarkHovered(true)}
-              onMouseLeave={() => setBookmarkHovered(false)}
-              onClick={handleBookmark}
+              onMouseEnter={() => setCopyHovered(true)}
+              onMouseLeave={() => setCopyHovered(false)}
+              onClick={handleCopy}
             >
               <Image
                 src={
-                  isBookmarked
-                    ? "/assets/icons/bookmark.svg"
-                    : "/assets/icons/bookmark-light.svg"
+                  copied === prompt.promptText
+                    ? "/assets/icons/tick.svg"
+                    : "/assets/icons/copy.svg"
                 }
                 width={12}
                 height={12}
-                alt="bookmark_icon"
+                alt="copy_icon"
               />
-              {bookmarkHovered && (
+              {copyHovered && (
                 <span className="tooltip tooltip-top absolute bottom-8 bg-black text-white py-1 px-2 rounded text-xs">
-                  Bookmark
+                  Copy
                 </span>
               )}
             </div>
-          )}
-          {session && (
-            <>
-              <div className="copy_btn cursor-pointer " onClick={handleLike}>
+            <div
+              className="copy_btn relative"
+              onMouseEnter={() => setShareHovered(true)}
+              onMouseLeave={() => setShareHovered(false)}
+              onClick={handleShare}
+            >
+              <Image
+                src={
+                  sharePopup === true
+                    ? "/assets/icons/tick.svg"
+                    : "/assets/icons/share.svg"
+                }
+                width={12}
+                height={12}
+                alt="share_icon"
+              />
+              {shareHovered && (
+                <span className="tooltip tooltip-top absolute bottom-8 bg-black text-white py-1 px-2 rounded text-xs">
+                  Share
+                </span>
+              )}
+            </div>
+            {session && (
+              <div
+                className="copy_btn relative"
+                onMouseEnter={() => setBookmarkHovered(true)}
+                onMouseLeave={() => setBookmarkHovered(false)}
+                onClick={handleBookmark}
+              >
                 <Image
                   src={
-                    isLiked
-                      ? "/assets/icons/heart-filled.svg"
-                      : "/assets/icons/heart-outline.svg"
+                    isBookmarked
+                      ? "/assets/icons/bookmark.svg"
+                      : "/assets/icons/bookmark-light.svg"
                   }
                   width={12}
                   height={12}
-                  alt="like_icon"
-                  className={`transition-colors duration-300 ${
-                    isLiked
-                      ? "text-red-500"
-                      : "text-gray-500 hover:text-red-500"
-                  }`}
+                  alt="bookmark_icon"
                 />
+                {bookmarkHovered && (
+                  <span className="tooltip tooltip-top absolute bottom-8 bg-black text-white py-1 px-2 rounded text-xs">
+                    Bookmark
+                  </span>
+                )}
               </div>
-              <span className="text-sm text-gray-500 p-1">{likeCount}</span>
-            </>
-          )}
+            )}
+            {session && (
+              <>
+                <div className="copy_btn cursor-pointer " onClick={handleLike}>
+                  <Image
+                    src={
+                      isLiked
+                        ? "/assets/icons/heart-filled.svg"
+                        : "/assets/icons/heart-outline.svg"
+                    }
+                    width={12}
+                    height={12}
+                    alt="like_icon"
+                    className={`transition-colors duration-300 ${
+                      isLiked
+                        ? "text-red-500"
+                        : "text-gray-500 hover:text-red-500"
+                    }`}
+                  />
+                </div>
+                <span className="text-sm text-gray-500 p-1">{likeCount}</span>
+              </>
+            )}
+          </div>
+          <h1 className="text-3xl font-bold font-satoshi text-left blue_gradient">
+            {profileUsername}'s prompt
+          </h1>
+          <h1 className="text-xl font-bold font-satoshi my-2">
+            {prompt.promptText}
+          </h1>
+          <p
+            className="text-lg font-satoshi my-2"
+            style={{ whiteSpace: "pre-line" }}
+          >
+            {prompt.result}
+          </p>
+          <p className="font-inter text-md blue_gradient ">{prompt.tagLine}</p>
         </div>
-        <h1 className="text-3xl font-bold font-satoshi text-left blue_gradient">
-          {profileUsername}'s prompt
-        </h1>
-        <h1 className="text-xl font-bold font-satoshi my-2">
-          {prompt.promptText}
-        </h1>
-        <p
-          className="text-lg font-satoshi my-2"
-          style={{ whiteSpace: "pre-line" }}
-        >
-          {prompt.result}
-        </p>
-        <p className="font-inter text-md blue_gradient ">{prompt.tagLine}</p>
-      </div>
-    </section>
+      </section>
+    </Suspense>
   );
 };
 
