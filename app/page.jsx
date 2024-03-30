@@ -9,7 +9,7 @@ const Home = () => {
         <span className="orange_gradient text-center"> AI Prompts</span>
       </h1>
       <p className="desc text-center">
-        Prompt-Pedia is a tool to discover, create and share AI prompts.
+        Prompt-Hunt is a tool to discover, create and share AI prompts.
       </p>
 
       <Feed />

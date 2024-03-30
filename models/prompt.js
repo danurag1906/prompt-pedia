@@ -17,6 +17,10 @@ const PromptSchema = new Schema({
     type: String,
     required: [true, "Tagline is required"],
   },
+  likes: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Prompt = models.Prompt || model("Prompt", PromptSchema);
