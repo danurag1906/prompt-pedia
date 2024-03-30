@@ -52,6 +52,8 @@ const MyProfile = () => {
     }
   }, [session?.user.id]);
 
+  // console.log(allPrompts, "allPrompts");
+
   return (
     <Profile
       name={session?.user.email}

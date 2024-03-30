@@ -11,7 +11,7 @@ const SinglePrompt = () => {
   });
   const searchParams = useSearchParams();
   const promptId = searchParams.get("id");
-  const profileUsername = searchParams.get("profileUsername");
+  const profileUsername = searchParams.get("pun");
   // console.log(promptId, "promptId");
 
   useEffect(() => {

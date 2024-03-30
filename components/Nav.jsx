@@ -3,12 +3,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Nav = () => {
   const { data: session } = useSession();
 
   const [providers, setProviders] = useState(null);
   const [toggleDropDown, setToggleDropDown] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const setProvidersFunc = async () => {
@@ -38,7 +40,17 @@ const Nav = () => {
             <Link href="/create-prompt" className="black_btn">
               Create Prompt
             </Link>
-            <button type="button" onClick={signOut} className="outline_btn">
+            <Link href="/get-bookmarks" className="black_btn">
+              Bookmarks
+            </Link>
+            <button
+              type="button"
+              onClick={() => {
+                signOut({ callbackUrl: "/" });
+                // router.push("/");
+              }}
+              className="outline_btn"
+            >
               Sign Out
             </button>
             <Link href="/profile">
@@ -82,13 +94,20 @@ const Nav = () => {
               onClick={() => setToggleDropDown((prev) => !prev)}
             />
             {toggleDropDown && (
-              <div className="dropdown">
+              <div className="dropdown z-10">
                 <Link
                   href="/profile"
                   className="dropdown_link "
                   onClick={() => setToggleDropDown(false)}
                 >
                   My Profile
+                </Link>
+                <Link
+                  href="/get-bookmarks"
+                  className="dropdown_link "
+                  onClick={() => setToggleDropDown(false)}
+                >
+                  Bookmarks
                 </Link>
                 <Link
                   href="/create-prompt"
@@ -102,7 +121,8 @@ const Nav = () => {
                   type="button"
                   onClick={() => {
                     setToggleDropDown(false);
-                    signOut();
+                    signOut({ callbackUrl: "/" });
+                    // router.push("/");
                   }}
                 >
                   Sign Out
