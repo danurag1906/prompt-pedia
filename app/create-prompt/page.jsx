@@ -22,7 +22,7 @@ const CreatePrompt = () => {
     try {
       const response = await fetch(
         "/api/prompt/new",
-        { cache: "no-store" },
+        // { cache: "no-store" },
         {
           method: "POST",
           body: JSON.stringify({

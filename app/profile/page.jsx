@@ -27,7 +27,7 @@ const MyProfile = () => {
       try {
         await fetch(
           `/api/prompt/${prompt._id.toString()}`,
-          { cache: "no-store" },
+          // { cache: "no-store" },
           {
             method: "DELETE",
           }

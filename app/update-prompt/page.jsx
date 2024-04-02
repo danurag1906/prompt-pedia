@@ -25,7 +25,7 @@ const UpdatePrompt = () => {
       try {
         const response = await fetch(
           `/api/prompt/${promptId}`,
-          { cache: "no-store" },
+          // { cache: "no-store" },
           {
             method: "PATCH",
             body: JSON.stringify({
