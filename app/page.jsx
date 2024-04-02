@@ -6,10 +6,10 @@ const Home = () => {
       <h1 className="head_text text-center">
         Discover, Create & Share
         <br className="max md:hidden" />
-        <span className="orange_gradient text-center"> AI Prompts</span>
+        <span className="orange_gradient text-center"> Prompts</span>
       </h1>
       <p className="desc text-center">
-        Prompt-Hunt is a tool to discover, create and share AI prompts.
+        FindPrompts is a tool to discover, create and share prompts.
       </p>
 
       <Feed />

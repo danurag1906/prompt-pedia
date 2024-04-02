@@ -8,7 +8,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { MainContextProvider } from "@context/MainContext";
 
 export const metadata = {
-  title: "Prompt-Hunt",
+  title: "FindPrompts",
   description: "Discover, create & share AI prompts",
 };
 
