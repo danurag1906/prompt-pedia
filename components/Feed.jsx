@@ -168,7 +168,7 @@ const Feed = () => {
       // setPrompts(data.reverse());
       const data = await fetchPromptsServerSide();
       // console.log(data, "data");
-      setPrompts(data);
+      setPrompts(data.reverse());
       if (data.length > 0) {
         // console.log("if condition");
         setLikeCount(
