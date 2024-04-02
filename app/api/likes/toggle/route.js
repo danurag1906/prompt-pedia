@@ -4,13 +4,15 @@ import Prompt from "@models/prompt";
 
 export const POST = async (req) => {
   try {
-    console.log("inside toggle");
+    // console.log("inside toggle");
     await connectToDB();
     // Extract data from request body
     const { promptId, userId } = await req.json();
+    // console.log(promptId, userId);
     // Check if user exists or not
 
     const user = await User.findById(userId);
+    // console.log(user);
     if (!user) {
       return new Response("User not found", { status: 404 });
     }

@@ -5,9 +5,44 @@ import { Suspense } from "react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { toast } from "react-hot-toast";
+const { useMainContext } = require("@context/MainContext");
 
 const SinglePrompt = () => {
   function SuspenseSinglePrompt() {
+    const {
+      // searchText,
+      // setSearchText,
+      // searchResult,
+      // setSearchResult,
+      // prompts,
+      // setPrompts,
+      copied,
+      // setCopied,
+      sharePopup,
+      // setSharePopup,
+      isBookmarked,
+      // setIsBookmarked,
+      // user,
+      // setUser,
+      // bookmarkLoading,
+      // setBookmarkLoading,
+      // feedLoading,
+      // setFeedLoading,
+      likeCount,
+      // setLikeCount,
+      isLiked,
+      // setIsLiked,
+      handleBookmark,
+      fetchBookmarkStatus,
+      fetchLikeCount,
+      fetchLikeStatus,
+      handleLike,
+      handleCopy,
+      handleShare,
+      // handleSearchChange,
+      // handleTagClick,
+      // filterPrompts,
+    } = useMainContext();
     const [prompt, setPrompt] = useState({
       promptText: "",
       result: "",
@@ -33,13 +68,6 @@ const SinglePrompt = () => {
       }
     }, [promptId]);
 
-    const [copied, setCopied] = useState("");
-    const [sharePopup, setSharePopup] = useState(false);
-    const [isBookmarked, setIsBookmarked] = useState(false);
-
-    const [likeCount, setLikeCount] = useState(0);
-    const [isLiked, setIsLiked] = useState(false); // State to track if prompt is liked
-
     const pathName = usePathname();
     const { data: session } = useSession();
     const router = useRouter();
@@ -50,172 +78,34 @@ const SinglePrompt = () => {
     const [shareHovered, setShareHovered] = useState(false);
     const [bookmarkHovered, setBookmarkHovered] = useState(false);
 
-    // console.log(session, "session");
-
-    const handleBookmark = async () => {
-      try {
-        if (!session) {
-          router.push("/login");
-          return;
-        }
-
-        const res = await fetch("/api/bookmarks/toggle", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            promptId: promptId,
-            userId: session?.user.id,
-          }),
-        });
-
-        if (res.ok) {
-          // console.log(res, "res");
-          if (res.status === 201) {
-            toast.success("Prompt removed from bookmarks");
-            setIsBookmarked(false);
-            if (pathName == "/get-bookmarks") {
-              onRemoveBookmark(promptId);
-            }
-          } else {
-            toast.success("Prompt bookmarked");
-            setIsBookmarked(true);
-          }
-          fetchBookmarkStatus();
-        } else {
-          const data = await res.json();
-          toast.error(data.message || "Something went wrong");
-        }
-      } catch (error) {
-        toast.error("Failed to bookmark prompt");
-      }
-    };
-
-    const fetchBookmarkStatus = async () => {
-      try {
-        const res = await fetch(`/api/bookmarks/status`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            promptId: promptId,
-            userId: userId,
-          }),
-        });
-        const data = await res.json();
-        setIsBookmarked(data.bookmarked);
-      } catch (error) {
-        toast.error("Error fetching bookmark status:");
-      }
-    };
-
     useEffect(() => {
       // console.log("indide useeffect");
       if (session) {
-        fetchLikeCount(); // Fetch like count when component mounts
-        fetchLikeStatus();
-        fetchBookmarkStatus();
+        fetchLikeCount(promptId); // Fetch like count when component mounts
+        fetchLikeStatus(promptId, userId);
+        fetchBookmarkStatus(userId);
       }
 
       // }
     }, [session]);
 
-    const fetchLikeCount = async () => {
-      try {
-        const res = await fetch(`/api/likes/count/${promptId}`);
-        const data = await res.json();
-        setLikeCount(data.likesCount);
-      } catch (error) {
-        console.error("Error fetching like count:", error);
-      }
-    };
-
-    const fetchLikeStatus = async () => {
-      try {
-        const res = await fetch(`/api/likes/status`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            promptId: promptId,
-            userId: userId,
-          }),
-        });
-        const data = await res.json();
-        setIsLiked(data.isLiked);
-      } catch (error) {
-        console.error("Error fetching like status:", error);
-      }
-    };
-
-    const handleLike = async () => {
-      try {
-        if (!session) {
-          router.push("/login");
-          return;
-        }
-
-        const res = await fetch("/api/likes/toggle", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            promptId: promptId,
-            userId: session?.user.id,
-          }),
-        });
-
-        if (res.ok) {
-          if (res.status == 201) {
-            setIsLiked(false);
-            toast.success("Prompt unliked");
-          } else {
-            setIsLiked(true);
-            toast.success("Prompt liked");
-          }
-
-          fetchLikeCount();
-          fetchLikeStatus();
-        } else {
-          const data = await res.json();
-          toast.error(data.message || "Something went wrong");
-        }
-      } catch (error) {
-        toast.error("Failed to toggle like");
-      }
-    };
-
-    const handleCopy = () => {
-      setCopied(prompt.promptText);
-      navigator.clipboard.writeText(prompt.promptText);
-      setTimeout(() => setCopied(""), 2000);
-      toast.success("Prompt copied to clipboard");
-    };
-
-    const handleShare = () => {
-      const url = `https://prompt-hunt.vercel.app/single-prompt?id=${promptId}&pun=${profileUsername}`;
-      navigator.clipboard.writeText(url);
-      setSharePopup(true);
-      setTimeout(() => setSharePopup(false), 2000);
-      toast.success("Link copied to clipboard");
-    };
-
     return (
       <section className="w-full mx-4 my-8">
+        {/* {promptId}
+        {prompt.promptText}
+        {prompt.desc}
+        {prompt.tagLine} */}
         <div className="flex  flex-col gap-7 prompt_card_full">
           <div className="flex gap-4">
             <div
               className="copy_btn relative"
               onMouseEnter={() => setCopyHovered(true)}
               onMouseLeave={() => setCopyHovered(false)}
-              onClick={handleCopy}
+              onClick={() => handleCopy(prompt.promptText)}
             >
               <Image
                 src={
+                  // copied
                   copied === prompt.promptText
                     ? "/assets/icons/tick.svg"
                     : "/assets/icons/copy.svg"
@@ -234,12 +124,13 @@ const SinglePrompt = () => {
               className="copy_btn relative"
               onMouseEnter={() => setShareHovered(true)}
               onMouseLeave={() => setShareHovered(false)}
-              onClick={handleShare}
+              onClick={() => handleShare(promptId, profileUsername)}
             >
               <Image
                 src={
                   sharePopup === true
-                    ? "/assets/icons/tick.svg"
+                    ? // sharePopup
+                      "/assets/icons/tick.svg"
                     : "/assets/icons/share.svg"
                 }
                 width={12}
@@ -257,11 +148,11 @@ const SinglePrompt = () => {
                 className="copy_btn relative"
                 onMouseEnter={() => setBookmarkHovered(true)}
                 onMouseLeave={() => setBookmarkHovered(false)}
-                onClick={handleBookmark}
+                onClick={() => handleBookmark(promptId, userId)}
               >
                 <Image
                   src={
-                    isBookmarked
+                    isBookmarked[promptId]
                       ? "/assets/icons/bookmark.svg"
                       : "/assets/icons/bookmark-light.svg"
                   }
@@ -278,10 +169,13 @@ const SinglePrompt = () => {
             )}
             {session && (
               <>
-                <div className="copy_btn cursor-pointer " onClick={handleLike}>
+                <div
+                  className="copy_btn cursor-pointer "
+                  onClick={() => handleLike(promptId, session?.user.id)}
+                >
                   <Image
                     src={
-                      isLiked
+                      isLiked[promptId]
                         ? "/assets/icons/heart-filled.svg"
                         : "/assets/icons/heart-outline.svg"
                     }
@@ -295,7 +189,9 @@ const SinglePrompt = () => {
                     }`}
                   />
                 </div>
-                <span className="text-sm text-gray-500 p-1">{likeCount}</span>
+                <span className="text-sm text-gray-500 p-1">
+                  {likeCount[promptId]}
+                </span>
               </>
             )}
           </div>

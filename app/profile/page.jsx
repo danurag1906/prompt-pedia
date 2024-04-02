@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 import Profile from "@components/Profile";
 import Link from "next/link";
+import Feed from "@components/Feed";
 
 const MyProfile = () => {
   const [allPrompts, setAllPrompts] = useState([]);
@@ -29,7 +30,7 @@ const MyProfile = () => {
         });
         fetchPrompts();
       } catch (error) {
-        console.log(error);
+        // console.log(error);
       }
     }
   };
@@ -52,16 +53,24 @@ const MyProfile = () => {
     }
   }, [session?.user.id]);
 
+  // const removeBookmarkFunc = (promptId) => {
+  //   setAllPrompts(allPrompts.filter((bookmark) => promptId !== bookmark._id));
+  // };
+
   // console.log(allPrompts, "allPrompts");
 
   return (
-    <Profile
-      name={session?.user.email}
-      desc="Private to you"
-      data={allPrompts}
-      handleEdit={handleEditFunc}
-      handleDelete={handleDeleteFunc}
-    />
+    <>
+      <Profile
+        name={session?.user.email}
+        desc="Private to you"
+        data={allPrompts}
+        handleEdit={handleEditFunc}
+        handleDelete={handleDeleteFunc}
+        // handleRemoveBookmark={removeBookmarkFunc}
+      />
+      {/* <Feed /> */}
+    </>
   );
 };
 

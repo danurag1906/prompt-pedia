@@ -5,6 +5,7 @@ import Provider from "@components/Provider";
 import { Toaster } from "react-hot-toast";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { MainContextProvider } from "@context/MainContext";
 
 export const metadata = {
   title: "Prompt-Hunt",
@@ -15,16 +16,18 @@ const RootLayout = ({ children }) => {
   return (
     <html lang="en">
       <body>
-        <Provider>
-          <Toaster position="top-center" />
-          <div className="main">
-            <div className="gardient" />
-          </div>
-          <main className="app">
-            <Nav />
-            {children}
-          </main>
-        </Provider>
+        <MainContextProvider>
+          <Provider>
+            <Toaster position="top-center" />
+            <div className="main">
+              <div className="gardient" />
+            </div>
+            <main className="app">
+              <Nav />
+              {children}
+            </main>
+          </Provider>
+        </MainContextProvider>
         <Analytics />
         <SpeedInsights />
       </body>
