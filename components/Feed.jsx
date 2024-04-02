@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { useMainContext } from "@context/MainContext";
+import useSWR from "swr";
 
 // const PromptCardList = ({ data, userdata, handleTagClick }) => {
 //   return (
@@ -47,6 +48,20 @@ const Feed = () => {
   // const router = useRouter();
   const userId = session?.user.id;
 
+  // Fetcher function for SWR
+  const fetcher = async (url) => {
+    // console.log("inside fetcher");
+    // console.log(url, "url");
+    const response = await fetch(url);
+    // console.log(response, "response");
+    if (!response.ok) {
+      throw new Error("Failed to fetch data");
+    }
+    const data = await response.json();
+    // console.log(data);
+    return data;
+  };
+
   const {
     searchText,
     // setSearchText,
@@ -82,6 +97,18 @@ const Feed = () => {
     // filterPrompts,
   } = useMainContext();
 
+  // Fetch prompts using SWR
+  const { data: prompt, error: promptsError } = useSWR("/api/prompt", fetcher);
+  // console.log(prompt, "prompt");
+  // console.log(promptsError, "error");
+  if (prompt) {
+    setPrompts(prompt);
+  }
+
+  // setPrompts(prompt);
+  // console.log(prompts, "prompts");
+  // toast.error("Error fetching prompts:", promptsError);
+
   const fetchUser = async () => {
     const userid = session?.user.id;
     // console.log(userid, "userId");
@@ -104,7 +131,7 @@ const Feed = () => {
       // console.log(userData, "userData");
 
       // Check if prompts are available
-      if (prompts.length > 0) {
+      if (prompts?.length > 0) {
         // Initialize isLiked object with all prompt IDs marked as false
         const initialIsLikedState = prompts.reduce((acc, item) => {
           // console.log("Initializing", item._id);
@@ -130,19 +157,22 @@ const Feed = () => {
   };
 
   const fetchPrompts = async () => {
+    // console.log("fetchPromps called");
     // setFeedLoading(true);
 
     try {
-      const response = await fetch("/api/prompt");
-      const data = await response.json();
+      // console.log("inside try");
+      // const response = await fetch("/api/prompt");
+      // const data = await response.json();
+      // setPrompts(data.reverse());
 
-      setPrompts(data.reverse());
-
-      setLikeCount(
-        data.reduce((acc, item) => {
-          return { ...acc, [item._id]: item.likes };
-        }, {})
-      );
+      if (prompts) {
+        setLikeCount(
+          prompts.reduce((acc, item) => {
+            return { ...acc, [item._id]: item.likes };
+          }, {})
+        );
+      }
     } catch (error) {
       // console.error("Error fetching prompts:", error);
       toast.error("Error fetching prompts:", error);
@@ -157,7 +187,7 @@ const Feed = () => {
   }, [session]);
 
   useEffect(() => {
-    if (prompts.length > 0 && user) {
+    if (prompts?.length > 0 && user) {
       // console.log(user, "useEffect");
       // Initialize isLiked object with all prompt IDs marked as false
       const initialIsLikedState = prompts.reduce((acc, item) => {
@@ -238,7 +268,7 @@ const Feed = () => {
           {feedLoading && <p>Loading...</p>}
           {bookmarkLoading && <p>Loading...</p>}
           <div className="mt-16 prompt_layout">
-            {prompts.map((item) => (
+            {prompts?.map((item) => (
               <PromptCard
                 key={item._id}
                 prompt={item}
