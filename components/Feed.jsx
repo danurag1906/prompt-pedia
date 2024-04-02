@@ -87,9 +87,7 @@ const Feed = () => {
     // console.log(userid, "userId");
     setUser(userid);
     // console.log(user, "fetchuser , user");
-    const response = await fetch(`/api/users/${session?.user.id}`, {
-      cache: "no-store",
-    });
+    const response = await fetch(`/api/users/${session?.user.id}`);
     const data = await response.json();
 
     // console.log(data[0], "user");
@@ -135,7 +133,7 @@ const Feed = () => {
     // setFeedLoading(true);
 
     try {
-      const response = await fetch("/api/prompt", { cache: "no-store" });
+      const response = await fetch("/api/prompt");
       const data = await response.json();
 
       setPrompts(data.reverse());

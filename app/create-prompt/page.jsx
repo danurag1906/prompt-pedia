@@ -20,19 +20,15 @@ const CreatePrompt = () => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const response = await fetch(
-        "/api/prompt/new",
-        // { cache: "no-store" },
-        {
-          method: "POST",
-          body: JSON.stringify({
-            promptText: prompt.promptText,
-            result: prompt.result,
-            tagLine: prompt.tagLine,
-            userID: session?.user.id,
-          }),
-        }
-      );
+      const response = await fetch("/api/prompt/new", {
+        method: "POST",
+        body: JSON.stringify({
+          promptText: prompt.promptText,
+          result: prompt.result,
+          tagLine: prompt.tagLine,
+          userID: session?.user.id,
+        }),
+      });
       if (response.ok) {
         router.push("/");
       }
