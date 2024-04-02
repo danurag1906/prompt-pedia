@@ -25,9 +25,13 @@ const MyProfile = () => {
     if (hasConfirmed) {
       // console.log("inseide try");
       try {
-        await fetch(`/api/prompt/${prompt._id.toString()}`, {
-          method: "DELETE",
-        });
+        await fetch(
+          `/api/prompt/${prompt._id.toString()}`,
+          { cache: "no-store" },
+          {
+            method: "DELETE",
+          }
+        );
         fetchPrompts();
       } catch (error) {
         // console.log(error);
@@ -38,7 +42,9 @@ const MyProfile = () => {
   const fetchPrompts = async () => {
     //   console.log("insides fetch primpts");
     //   console.log(session?.user.id, "id");
-    const response = await fetch(`/api/users/allPrompts/${session?.user.id}`);
+    const response = await fetch(`/api/users/allPrompts/${session?.user.id}`, {
+      cache: "no-store",
+    });
     const data = await response.json();
     //   console.log(data, "data");
     setAllPrompts(data.reverse());

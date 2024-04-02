@@ -50,7 +50,9 @@ const Bookmarks = () => {
 
   const fetchBookmarks = async () => {
     setLoading(true);
-    const response = await fetch(`/api/bookmarks/getBookmarks/${userId}`);
+    const response = await fetch(`/api/bookmarks/getBookmarks/${userId}`, {
+      cache: "no-store",
+    });
     const data = await response.json();
     // console.log(data, "data");
     setBookmarks(data);

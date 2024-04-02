@@ -87,7 +87,9 @@ const Feed = () => {
     // console.log(userid, "userId");
     setUser(userid);
     // console.log(user, "fetchuser , user");
-    const response = await fetch(`/api/users/${session?.user.id}`);
+    const response = await fetch(`/api/users/${session?.user.id}`, {
+      cache: "no-store",
+    });
     const data = await response.json();
 
     // console.log(data[0], "user");

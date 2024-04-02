@@ -18,7 +18,9 @@ const MyProfile = () => {
     const fetchPrompts = async () => {
       //   console.log("insides fetch primpts");
       //   console.log(session?.user.id, "id");
-      const response = await fetch(`/api/users/allPrompts/${profileId}`);
+      const response = await fetch(`/api/users/allPrompts/${profileId}`, {
+        cache: "no-store",
+      });
       const data = await response.json();
       //   console.log(data, "data");
       setAllPrompts(data.reverse());
@@ -26,7 +28,9 @@ const MyProfile = () => {
     };
 
     const fetchProfile = async () => {
-      const response = await fetch(`/api/users/${profileId}`);
+      const response = await fetch(`/api/users/${profileId}`, {
+        cache: "no-store",
+      });
       const data = await response.json();
       const username = await data[0].username;
       setUser(username);

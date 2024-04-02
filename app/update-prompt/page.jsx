@@ -23,14 +23,18 @@ const UpdatePrompt = () => {
       e.preventDefault();
       setSubmitting(true);
       try {
-        const response = await fetch(`/api/prompt/${promptId}`, {
-          method: "PATCH",
-          body: JSON.stringify({
-            promptText: prompt.promptText,
-            result: prompt.result,
-            tagLine: prompt.tagLine,
-          }),
-        });
+        const response = await fetch(
+          `/api/prompt/${promptId}`,
+          { cache: "no-store" },
+          {
+            method: "PATCH",
+            body: JSON.stringify({
+              promptText: prompt.promptText,
+              result: prompt.result,
+              tagLine: prompt.tagLine,
+            }),
+          }
+        );
         if (response.ok) {
           router.push("/");
         }
@@ -43,7 +47,9 @@ const UpdatePrompt = () => {
 
     useEffect(() => {
       const getPromptDetails = async () => {
-        const response = await fetch(`/api/prompt/${promptId}`);
+        const response = await fetch(`/api/prompt/${promptId}`, {
+          cache: "no-store",
+        });
         const data = await response.json();
         setPrompt({
           promptText: data.promptText,
