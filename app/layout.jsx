@@ -9,7 +9,7 @@ import { MainContextProvider } from "@context/MainContext";
 
 export const metadata = {
   title: "FindPrompts",
-  description: "Discover, create & share AI prompts",
+  description: "Discover, create & share prompts",
 };
 
 const RootLayout = ({ children }) => {

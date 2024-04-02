@@ -195,18 +195,24 @@ const SinglePrompt = () => {
               </>
             )}
           </div>
-          <h1 className="text-3xl font-bold font-satoshi text-left blue_gradient">
+          <h1 className="text-xl font-bold font-satoshi text-left blue_gradient">
             {profileUsername}'s prompt
           </h1>
-          <h1 className="text-xl font-bold font-satoshi my-2">
-            {prompt.promptText}
-          </h1>
-          <p
-            className="text-lg font-satoshi my-2"
-            style={{ whiteSpace: "pre-line" }}
-          >
-            {prompt.result}
-          </p>
+          <div className="flex flex-col">
+            <span className="text-xl font-bold font-satoshi my-2">Prompt:</span>
+            <h1 className="text-lg  font-satoshi my-2">{prompt.promptText}</h1>
+          </div>
+          <div className="flex flex-col ">
+            <span className="text-xl font-bold font-satoshi my-2">
+              Prompt Output:
+            </span>
+            <p
+              className="text-md font-satoshi my-2 flex"
+              style={{ whiteSpace: "pre-line" }}
+            >
+              {prompt.result}
+            </p>
+          </div>
           <p className="font-inter text-md blue_gradient ">{prompt.tagLine}</p>
         </div>
       </section>

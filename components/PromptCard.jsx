@@ -46,7 +46,7 @@ const PromptCard = ({
 
   return (
     <>
-      <div className="prompt_card my-4 ">
+      <div className="prompt_card  ">
         {/* {prompt} */}
         <div className="flex justify-between items-start gap-5">
           <div className="flex-1 flex justify-start items-center gap-3 cursor-pointer">
