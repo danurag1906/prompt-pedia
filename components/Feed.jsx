@@ -9,7 +9,8 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { toast } from "react-hot-toast";
 import { useMainContext } from "@context/MainContext";
-import useSWR from "swr";
+// import useSWR from "swr";
+import { fetchPromptsServerSide } from "@utils/helperfunctions";
 
 // const PromptCardList = ({ data, userdata, handleTagClick }) => {
 //   return (
@@ -49,18 +50,18 @@ const Feed = () => {
   const userId = session?.user.id;
 
   // Fetcher function for SWR
-  const fetcher = async (url) => {
-    // console.log("inside fetcher");
-    // console.log(url, "url");
-    const response = await fetch(url);
-    // console.log(response, "response");
-    if (!response.ok) {
-      throw new Error("Failed to fetch data");
-    }
-    const data = await response.json();
-    // console.log(data);
-    return data;
-  };
+  // const fetcher = async (url) => {
+  //   // console.log("inside fetcher");
+  //   // console.log(url, "url");
+  //   const response = await fetch(url);
+  //   // console.log(response, "response");
+  //   if (!response.ok) {
+  //     throw new Error("Failed to fetch data");
+  //   }
+  //   const data = await response.json();
+  //   // console.log(data);
+  //   return data;
+  // };
 
   const {
     searchText,
@@ -98,12 +99,12 @@ const Feed = () => {
   } = useMainContext();
 
   // Fetch prompts using SWR
-  const { data: prompt, error: promptsError } = useSWR("/api/prompt", fetcher);
+  // const { data: prompt, error: promptsError } = useSWR("/api/prompt", fetcher);
   // console.log(prompt, "prompt");
   // console.log(promptsError, "error");
-  if (prompt) {
-    setPrompts(prompt);
-  }
+  // if (prompt) {
+  //   setPrompts(prompt);
+  // }
 
   // setPrompts(prompt);
   // console.log(prompts, "prompts");
@@ -165,10 +166,13 @@ const Feed = () => {
       // const response = await fetch("/api/prompt");
       // const data = await response.json();
       // setPrompts(data.reverse());
-
-      if (prompts) {
+      const data = await fetchPromptsServerSide();
+      // console.log(data, "data");
+      setPrompts(data);
+      if (data.length > 0) {
+        // console.log("if condition");
         setLikeCount(
-          prompts.reduce((acc, item) => {
+          data.reduce((acc, item) => {
             return { ...acc, [item._id]: item.likes };
           }, {})
         );
