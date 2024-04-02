@@ -206,7 +206,7 @@ export const MainContextProvider = ({ children }) => {
   };
 
   const handleShare = (promptid, creatorname) => {
-    const url = `http://localhost:3000/single-prompt?id=${promptid}&pun=${creatorname}`;
+    const url = `https://findprompts.vercel.app/single-prompt?id=${promptid}&pun=${creatorname}`;
     navigator.clipboard.writeText(url);
     setSharePopup((prev) => ({
       ...prev,
