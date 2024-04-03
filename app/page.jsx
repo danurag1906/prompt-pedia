@@ -9,7 +9,7 @@ const Home = () => {
         <span className="orange_gradient text-center"> Prompts</span>
       </h1>
       <p className="desc text-center">
-        FindPrompts is a tool to discover, create and share prompts.
+        SignUp to create, like and bookmark prompts.
       </p>
 
       <Feed />
