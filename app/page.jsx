@@ -1,6 +1,9 @@
+"use client";
 import Feed from "@components/Feed";
+import { useMainContext } from "@context/MainContext";
 
 const Home = () => {
+  const { user } = useMainContext();
   return (
     <section className="w-full flex-center flex-col">
       <h1 className="head_text text-center">
@@ -8,9 +11,11 @@ const Home = () => {
         <br className="max md:hidden" />
         <span className="orange_gradient text-center"> Prompts</span>
       </h1>
-      <p className="desc text-center">
-        SignIn to create, like and bookmark prompts.
-      </p>
+      {!user && (
+        <p className="desc text-center">
+          SignIn to create, like and bookmark prompts.
+        </p>
+      )}
 
       <Feed />
     </section>
