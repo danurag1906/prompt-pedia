@@ -9,7 +9,7 @@ const Home = () => {
         <span className="orange_gradient text-center"> Prompts</span>
       </h1>
       <p className="desc text-center">
-        SignUp to create, like and bookmark prompts.
+        SignIn to create, like and bookmark prompts.
       </p>
 
       <Feed />
